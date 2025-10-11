@@ -1,12 +1,484 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stable-FAST</title>
-</head>
-<body>
-    <h1>This page is for ICLR 2026 review.</h1>
-    <p>keep anonymous to obey the ICLR policy.</p>
-    <p>The page is under construction, and it will be online within 12 hours.</p>
+
+    <link href="static/css/css2.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="static/css/all.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="static/css/swiper-bundle.min.css">
+    <link href="static/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="static/css/style.css" rel="stylesheet" type="text/css">
+    <link href="static/css/responsive.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const carousel = document.getElementById('videoCarousel');
+        const progressContainer = carousel.querySelector('.video-progress');
+        const progressBar = carousel.querySelector('.progress-bar');
+        
+        let currentVideo = null;
+        let isDragging = false;
+
+
+        function updateProgressBar() {
+          if (isDragging || !currentVideo || !currentVideo.duration) return;
+          
+          const percentage = (currentVideo.currentTime / currentVideo.duration) * 100;
+          progressBar.style.width = percentage + '%';
+        }
+
+        function seek(event) {
+          if (!currentVideo || isNaN(currentVideo.duration)) return;
+
+          const rect = progressContainer.getBoundingClientRect();
+          const clickX = event.clientX - rect.left;
+          const width = rect.width;
+          
+          const percentage = Math.max(0, Math.min(1, clickX / width));
+          
+          currentVideo.currentTime = percentage * currentVideo.duration;
+          progressBar.style.width = percentage * 100 + '%';
+        }
+
+        function setupVideoListener() {
+          if (currentVideo) {
+            currentVideo.removeEventListener('timeupdate', updateProgressBar);
+          }
+          
+          const activeItem = carousel.querySelector('.carousel-item.active');
+          if (activeItem) {
+            currentVideo = activeItem.querySelector('video');
+            if (currentVideo) {
+              currentVideo.addEventListener('timeupdate', updateProgressBar);
+            }
+          }
+        }
+
+        carousel.addEventListener('slid.bs.carousel', function () {
+          progressBar.style.width = '0%';
+          setupVideoListener();
+        });
+
+        setupVideoListener();
+
+        progressContainer.addEventListener('mousedown', (event) => {
+          isDragging = true;
+          seek(event); 
+
+          const onMouseMove = (moveEvent) => {
+            if (isDragging) {
+              seek(moveEvent);
+            }
+          };
+
+          const onMouseUp = () => {
+            isDragging = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+          };
+
+          document.addEventListener('mousemove', onMouseMove);
+          document.addEventListener('mouseup', onMouseUp);
+        });
+
+      });
+    </script>
+  </head>
+
+  <body>
+    <!-- show -->
+    <section id="hero-section">
+      <div class="image-container">
+        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active position-relative">
+              <video class="d-block w-100" autoplay loop muted>
+                <source src="static/video/home.mp4" type="video/mp4">
+                wait for loading ...
+              </video>
+              <div class="carousel-caption" style="bottom: 1.5%; left: 4%; right: 5%; text-align: left; z-index: 99">
+                <h2 class="text-start" style="font-size: 47px">
+                  Stable-FAST: Stabilizing Inference of Autoregressive Vision-Language-Action Models
+                </h2>
+              </div>
+
+            </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- github code -->
+    <section id="github-link" class="py-0 pt-4 pb-0" style="background-color: white;">
+      <div class="container text-center">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <a href="https://github.com/stablefast/anonymous-stablefast" target="_blank" class="btn btn-dark btn-lg shadow-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+              </svg>
+              <span style="font-size: 1.1rem; font-weight: 500;">View the Code on GitHub</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+    <!-- stable-fast introduction -->
+    <section id="testimonial" data-aos="fade-up">
+      <div class="container">
+        <div class="row d-flex align-items-center">
+          <div class="col-md-6 col-lg-5 px-0">
+            <img src="static/image/intro.svg" class="img-fluid w-100">
+          </div>
+          <div class="col-md-6 col-lg-7 px-0">
+            <div class="text-center px-5">
+              <h4 class="my-2 text-center w-100">
+                <b>What is Stable-FAST?</b>
+              </h4>
+              <p>
+                Stable-FAST is a novel action tokenizer designed to resolve critical inference instability in autoregressive Vision-Language-Action (VLA) models. 
+                Its predecessor, the FAST tokenizer, processes fixed-langth action chunks, which results in token sequences of widely varying lengths. 
+                This variability is a primary source of instability, leading to prediction errors, jerky motions, and ultimately, reduced task success rate.<br> 
+                Stable-FAST inverts this method by partitioning action trajectories into variable-length chunks, each normalized to a consistent level of complexity, 
+                thereby producing token sequences with significantly reduced length variance. 
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+
+
+
+    <!-- Faster Execution Speed -->
+    <section id="destination" data-aos="fade-up">
+      <div class="container">
+        <div class="d-flex justify-content-center">
+          <div class="destination-title-wrap">
+            <h3 class="text-center title">
+              <b>Faster Execution Speed</b>
+            </h3>
+          </div>
+        </div>
+
+        <div id="videoCarousel" class="carousel slide mt-4" data-bs-ride="carousel">
+          <div class="carousel-inner">
+
+            <div class="carousel-item active">
+              <video class="d-block w-100" autoplay loop muted>
+                <source src="static/video/pick_place.mp4" type="video/mp4">
+                wait for loading ...
+              </video>
+              <div class="carousel-caption d-none d-md-block">
+                <h4>Pick up the heart and place it into the basket</h4>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <video class="d-block w-100" autoplay loop muted>
+                <source src="static/video/sorting.mp4" type="video/mp4">
+                wait for loading ...
+              </video>
+              <div class="carousel-caption d-none d-md-block">
+                <h4>Sorting Task</h4>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <video class="d-block w-100" autoplay loop muted>
+                <source src="static/video/bussing.mp4" type="video/mp4">
+                wait for loading ...
+              </video>
+              <div class="carousel-caption d-none d-md-block">
+                <h4>Table Bussing Task</h4>
+              </div>
+            </div>
+
+
+
+          </div>
+
+          <button class="carousel-control-prev" type="button" data-bs-target="#videoCarousel" data-bs-slide="prev", 
+            style="background-color: rgba(50, 50, 50, 1.0);
+                   width: 60px;
+                   height: 60px; 
+                   border-radius: 20%; 
+                   top: 50%;
+                   transform: translateY(-50%);
+                   opacity: 1.0;
+                   transition: opacity 0.3s ease;
+                   left: 1rem;">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#videoCarousel" data-bs-slide="next",
+            style="background-color: rgba(50, 50, 50, 1.0);
+                   width: 60px;
+                   height: 60px; 
+                   border-radius: 20%; 
+                   top: 50%;
+                   transform: translateY(-50%);
+                   opacity: 1.0;
+                   transition: opacity 0.3s ease;
+                   right: 1rem">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+
+          <div class="video-progress", style="
+                position: absolute;
+                bottom: 20px; 
+                left: 15%; 
+                right: 15%;
+                width: 70%;
+                height: 8px; 
+                background-color: rgba(255, 255, 255, 0.4); 
+                border-radius: 5px;
+                z-index: 10;
+                overflow: hidden;
+                cursor: pointer;">
+            <div class="progress-bar", style="
+                height: 100%;
+                width: 0%;
+                background-color: #ffffff;
+                border-radius: 5px;
+                pointer-events: none;">
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+    <!-- 2 higher success rate -->
+    <section id="our-photos" data-aos="fade-up", class="py-5">
+      <div class="container our-photos-section">
+        <h3 class="text-center mb-4"><b>Higher Success Rate</b></h3>
+        <div class="d-flex justify-content-center mb-4">
+          <ul class="nav nav-pills" id="photoTabs" role="tablist">
+            <li class="nav-item">
+              <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true">
+                Overall
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" id="fishing-tab" data-bs-toggle="tab" data-bs-target="#fishing" type="button" role="tab" aria-controls="fishing" aria-selected="false">
+                Multitask Details
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div class="tab-content" id="photoTabsContent">
+          <!-- Overall 4-->
+          <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+            <div class="row g-5 row-cols-1 row-cols-md-4">
+              <div class="col">
+                <img src="static/image/LIBERO.png" class="img-fluid rounded" alt="LIBERO">
+              </div>
+              <div class="col">
+                <img src="static/image/Table Bussing.png" class="img-fluid rounded" alt="Table Bussing">
+              </div>
+              <div class="col">
+                <img src="static/image/Sorting.png" class="img-fluid rounded" alt="Sorting">
+              </div>
+              <div class="col">
+                <img src="static/image/Multitask.png" class="img-fluid rounded" alt="Multitask">
+              </div>
+            </div>
+          </div>
+
+          <!-- Multitask Details 10 5/5 -->
+          <div class="tab-pane fade" id="fishing" role="tabpanel" aria-labelledby="fishing-tab">
+            <div class="row g-1 row-cols-1 row-cols-md-5">
+                <!-- line 1 -->
+                <div class="col">
+                  <img src="static/image/Paper.png" class="img-fluid rounded" alt="paper">
+                </div>
+                <div class="col">
+                  <img src="static/image/Bread.png" class="img-fluid rounded" alt="bread">
+                </div>
+                <div class="col">
+                  <img src="static/image/Lemon.png" class="img-fluid rounded" alt="lemon">
+                </div>
+                <div class="col">
+                  <img src="static/image/Heart.png" class="img-fluid rounded" alt="heart">
+                </div>
+                <div class="col">
+                  <img src="static/image/Watermelon.png" class="img-fluid rounded" alt="watermelon">
+                </div>
+                <!-- line 2 -->
+                <div class="col">
+                  <img src="static/image/Plate.png" class="img-fluid rounded" alt="plate">
+                </div>
+                <div class="col">
+                  <img src="static/image/Bowl.png" class="img-fluid rounded" alt="bowl">
+                </div>
+                <div class="col">
+                  <img src="static/image/Block.png" class="img-fluid rounded" alt="block">
+                </div>
+                <div class="col">
+                  <img src="static/image/Tape.png" class="img-fluid rounded" alt="tape">
+                </div>
+                <div class="col">
+                  <img src="static/image/Cube.png" class="img-fluid rounded" alt="cube">
+                </div>
+
+            </div>
+          </div>
+      </div>
+    </section>
+
+
+    <!-- 3 less action instablity -->
+    <section id="tour-guide" data-aos="fade-up">
+      <h3 class="text-center mb-4"><b>Less Action Instability</b></h3>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-10 col-md-12">
+
+            <div class="row">
+              <div class="col-md-6">
+                <img src="static/image/less action inst.gif" class="img-fluid w-100" alt="Animation showing smooth robot motion">
+              </div>
+              <div class="col-md-6">
+                <img src="static/image/instablity.svg" class="img-fluid" alt="Graph showing reduced action instability">
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="text-center">
+                <p>
+                  Stable-FAST produces significantly smoother and more stable robot motions by ensuring a consistent generation rate for action chunks. 
+                  Our method directly reduces action instability, reflected in lower \(\text{A-AI}_\text{ins}\) metrics, resulting in visibly fluid and less jerky movements.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <footer class="footer-section">
+      <div class="copyright-area">
+        <div class="container">
+          <div class="row d-flex justify-content-between">
+              <div class="copyright-text">
+                <p>
+                  <b>Under review of ICLR 2026. Keep anonymous to obey the ICLR policy.</b>
+                </p>
+              </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+
+
+
+    <!-- jquery 3.6.0 (Must be loaded first) -->
+    <script src="static/js/jquery.min.js"></script>
+
+    <!-- bootstrap 5 main.js (Depends on jQuery) -->
+    <script src="static/js/bootstrap.js"></script>
+
+    <!-- jquery -->
+    <script src="static/js/jquery.min.js"></script>
+
+    <!-- slick slider js -->
+    <script src="static/js/slick.min.js"></script>
+
+    <!-- gsap -->
+    <script src="static/js/gsap.min.js"></script>
+    <script src="static/js/ScrollTrigger.min.js"></script>
+
+    <!-- gsap custom js -->
+    <!-- <script src="js/gsap.js"></script> -->
+
+    <!-- Swiper JS -->
+    <script src="static/js/swiper-bundle.min.js"></script>
+
+    <!-- custom css -->
+    <script src="static/js/main.js"></script>
+    <script>
+      const entryElements = $(".entry");
+      let entryIndex = 0;
+
+      $(".next").click(function () {
+        entryIndex++;
+        entryElements.hide();
+        $(entryElements[entryIndex]).show();
+      });
+
+      $(".back").click(function () {
+        entryIndex--;
+        entryElements.hide();
+        $(entryElements[entryIndex]).show();
+      });
+    </script>
+
+    <!-- JavaScript -->
+    <script>
+      // Get form elements
+      const findBtn = document.getElementById("findBtn");
+      const whereTo = document.getElementById("whereTo");
+      const date = document.getElementById("date");
+      const travelType = document.getElementById("travelType");
+
+      // Add event listener to the button
+      findBtn.addEventListener("click", (event) => {
+        event.preventDefault(); 
+
+        // Check if all fields are filled
+        if (
+          whereTo.value.trim() !== "" &&
+          date.value.trim() !== "" &&
+          travelType.value.trim() !== ""
+        ) {
+          // Show the modal if all fields are filled
+          const findModal = new bootstrap.Modal(
+            document.getElementById("findModal")
+          );
+          findModal.show();
+
+          // Reset form after showing modal
+          setTimeout(() => {
+            whereTo.value = "";
+            date.value = "";
+            travelType.selectedIndex = 0; // Reset dropdown
+          }, 500);
+        } else {
+          // Alert the user if fields are missing
+          alert("Please fill in all the fields before proceeding.");
+        }
+      });
+    </script>
+  	
 </body>
 </html>
