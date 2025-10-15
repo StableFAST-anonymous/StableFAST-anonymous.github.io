@@ -39,7 +39,8 @@
    ***/
 
 body {
-  font-family: "Kanit", sans-serif;
+  /* font-family: "Kanit", sans-serif; */
+  font-family: "SF-Pro-Display";
   font-size: 14px;
   /* color: var(--text_white); */
   /* color: #d4d3d3; */
@@ -83,7 +84,8 @@ h6 {
   font-weight: normal;
   margin: 0px;
   background: none;
-  font-family: "Kanit", sans-serif;
+  font-family: "SF-Pro-Display";
+	
 }
 
 /* Typography */
@@ -162,7 +164,7 @@ img {
   background-color: var(--bg_primary);
   padding: 12px 0;
   font-size: 20px;
-  font-family: "Kanit";
+  font-family: "SF-Pro-Display";
   color: var(--text_white);
 }
 /* click to action (cta) button  end*/
